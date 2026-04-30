@@ -1,26 +1,281 @@
 @import "tailwindcss";
 
+/* ---------- Design tokens ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces */
+  --paper: #f6f3ec;
+  --paper-deep: #efe9dc;
+  --surface: #ffffff;
+  --ink: #0b1f1e;
+  --ink-soft: #324442;
+  --muted: #5e7472;
+  --line: #e3ddcd;
+  --line-strong: #c9c0a7;
+
+  /* Brand */
+  --petrol: #0e4f4c;
+  --petrol-deep: #093734;
+  --petrol-ink: #042422;
+  --teal: #14b8a6;
+  --teal-soft: #c8efe9;
+  --lime: #c8ff6e;
+  --amber: #f5b840;
+
+  /* Status (used for biohazard tags) */
+  --hz-yellow: #f1c40f;
+  --hz-blue: #2e86de;
+  --hz-red: #e55353;
+
+  /* Type scale (clamp) */
+  --display: clamp(2.6rem, 6vw, 5.25rem);
+  --h1: clamp(2.1rem, 4.4vw, 3.4rem);
+  --h2: clamp(1.7rem, 3vw, 2.4rem);
+  --h3: 1.25rem;
+
+  /* Radii */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 34px;
+
+  /* Shadows */
+  --shadow-soft: 0 1px 0 rgba(11, 31, 30, 0.04), 0 18px 48px -22px rgba(11, 31, 30, 0.18);
+  --shadow-ring: 0 0 0 1px var(--line);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ---------- Base ---------- */
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.005em;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--petrol-ink);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: var(--display);
+}
+h2 {
+  font-size: var(--h2);
+  line-height: 1.05;
+}
+h3 {
+  font-size: var(--h3);
+  letter-spacing: -0.015em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ---------- Utility classes ---------- */
+.eyebrow {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--petrol);
+}
+
+.container-x {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 3vw, 2rem);
+}
+
+.hairline-grid {
+  background-image:
+    linear-gradient(to right, rgba(14, 79, 76, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 79, 76, 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.dot-grid {
+  background-image: radial-gradient(rgba(14, 79, 76, 0.18) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Card with crisp ring */
+.card {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-ring);
+}
+
+.card-soft {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+}
+
+/* Marquee for trust strip */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+
+/* Accordion */
+details.faq summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+details.faq[open] .faq-icon {
+  transform: rotate(45deg);
+}
+details.faq .faq-icon {
+  transition: transform 220ms ease;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.005em;
+  transition:
+    transform 160ms ease,
+    background 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--petrol);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 28px -14px rgba(14, 79, 76, 0.65);
+}
+.btn-primary:hover {
+  background: var(--petrol-deep);
+  transform: translateY(-1px);
+}
+.btn-accent {
+  background: var(--lime);
+  color: var(--petrol-ink);
+}
+.btn-accent:hover {
+  background: #b6f046;
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+.btn-ghost:hover {
+  background: var(--paper-deep);
+}
+
+/* Highlight swipe behind hero accent text */
+.swipe-highlight {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  color: #ffffff;
+}
+.swipe-highlight::before {
+  content: "";
+  position: absolute;
+  left: -0.05em;
+  right: -0.05em;
+  bottom: 0.06em;
+  height: 0.42em;
+  background: var(--teal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  z-index: -1;
+  border-radius: 2px;
+  animation: swipe-in 700ms cubic-bezier(0.65, 0, 0.35, 1) 1.6s forwards;
+}
+@keyframes swipe-in {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Subtle "scroll for more" cue */
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+.nudge {
+  animation: nudge 1.8s ease-in-out infinite;
+}
+
+/* Tag dot variants */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+/* Text balance for short headings */
+.balance {
+  text-wrap: balance;
+}
+
+/* Hide scrollbars on horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
 }
