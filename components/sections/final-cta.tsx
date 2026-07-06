@@ -40,14 +40,17 @@ export function FinalCTA() {
             </p>
 
             <div className="mt-8">
+              <div className="text-sm font-medium text-white/60">
+                Clientes ativos em
+              </div>
               <div
                 className="font-display text-[2.75rem] font-semibold leading-none text-white"
                 style={{ letterSpacing: "-0.03em" }}
               >
                 +100
               </div>
-              <div className="mt-2 text-sm text-white/70">
-                clientes ativos no Paraná e São Paulo
+              <div className="mt-1.5 text-sm text-white/70">
+                cidades do PR e SP
               </div>
             </div>
 
