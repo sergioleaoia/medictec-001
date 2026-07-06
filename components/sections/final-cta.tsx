@@ -1,93 +1,73 @@
+import Image from "next/image";
 import { WhatsAppButton } from "../primitives/cta";
-import { Biohazard, CheckIcon } from "../primitives/icons";
-
-const PROMISES = [
-  "Diagnóstico técnico gratuito (sem formulário longo)",
-  "Proposta sob medida — frequência, embalagens e custo",
-  "Migração organizada do fornecedor atual",
-];
 
 export function FinalCTA() {
   return (
-    <section className="relative px-4 py-20 sm:py-28">
+    <section id="experiencia" className="px-4 py-20 sm:py-24">
       <div
-        className="container-x relative overflow-hidden rounded-[36px] border px-7 py-14 sm:px-12 sm:py-16"
+        className="container-x relative isolate overflow-hidden rounded-[30px] px-7 py-14 sm:px-12 sm:py-16"
         style={{
           background:
-            "linear-gradient(140deg, var(--petrol) 0%, var(--petrol-deep) 70%, #021c1a 100%)",
-          borderColor: "rgba(255,255,255,0.08)",
+            "linear-gradient(145deg, var(--petrol) 0%, var(--petrol-deep) 60%, #052422 100%)",
         }}
       >
-        <div className="hairline-grid pointer-events-none absolute inset-0 opacity-[0.08]" />
-        <Biohazard
-          className="pointer-events-none absolute -right-10 -top-10 h-72 w-72 text-[var(--lime)] opacity-10"
+        {/* soft glow */}
+        <div
           aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 -z-10 h-96 w-96 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(20,184,166,0.28) 0%, transparent 66%)",
+          }}
         />
 
-        <div className="relative grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+        <div className="relative grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
+          {/* ---------- Text ---------- */}
+          <div>
             <span
-              className="text-[0.72rem] font-semibold uppercase tracking-[0.18em]"
+              className="text-[0.72rem] font-semibold uppercase tracking-[0.16em]"
               style={{ color: "var(--lime)" }}
             >
-              Próximo passo
+              Sobre a Medictec
             </span>
-            <h2 className="mt-3 text-white">
-              Em uma conversa, você sai com diagnóstico e plano sob medida.
+            <h2 className="mt-3 text-white balance">
+              Há décadas cuidando do descarte de resíduos de empresas como a
+              sua.
             </h2>
             <p className="mt-5 max-w-lg text-white/75">
-              Atendimento direto pelo time técnico-comercial — sem
-              transferência, sem chamado em fila. Para clínicas, hospitais e
-              laboratórios em mais de 100 cidades.
+              De pequenas clínicas a grandes hospitais, laboratórios e
+              indústrias.
             </p>
 
-            <ul className="mt-8 space-y-3">
-              {PROMISES.map((p) => (
-                <li
-                  key={p}
-                  className="flex items-center gap-3 text-sm text-white/85"
-                >
-                  <span
-                    className="grid h-6 w-6 place-items-center rounded-full"
-                    style={{ background: "var(--lime)" }}
-                  >
-                    <CheckIcon
-                      className="h-3.5 w-3.5"
-                      style={{ color: "var(--petrol-ink)" }}
-                    />
-                  </span>
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-5">
-            <div
-              className="rounded-3xl border p-6 sm:p-7"
-              style={{
-                borderColor: "rgba(255,255,255,0.10)",
-                background: "rgba(255,255,255,0.04)",
-              }}
-            >
-              <div className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-white/55">
-                Atendimento
-              </div>
-              <div className="mt-4">
-                <WhatsAppButton
-                  label="Falar no WhatsApp"
-                  variant="accent"
-                  className="w-full justify-center"
-                />
-              </div>
-
+            <div className="mt-8">
               <div
-                className="mt-5 border-t pt-5 text-xs text-white/55"
-                style={{ borderColor: "rgba(255,255,255,0.10)" }}
+                className="font-display text-[2.75rem] font-semibold leading-none text-white"
+                style={{ letterSpacing: "-0.03em" }}
               >
-                Horário comercial · Resposta no mesmo dia útil.
+                +100
+              </div>
+              <div className="mt-2 text-sm text-white/70">
+                clientes ativos no Paraná e São Paulo
               </div>
             </div>
+
+            <div className="mt-9">
+              <WhatsAppButton variant="primary" />
+            </div>
+          </div>
+
+          {/* ---------- HQ facade photo ---------- */}
+          <div
+            className="relative aspect-[4/3] w-full overflow-hidden rounded-[22px]"
+            style={{ border: "1px solid rgba(255,255,255,0.12)" }}
+          >
+            <Image
+              src="/foto fachada medictec.jpg"
+              alt="Fachada da sede da Medictec Ambiental"
+              fill
+              sizes="(max-width: 1024px) 90vw, 45vw"
+              className="object-cover"
+            />
           </div>
         </div>
       </div>

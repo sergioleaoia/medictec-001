@@ -1,105 +1,82 @@
 import { WhatsAppButton } from "../primitives/cta";
-import { ArrowOut, CheckIcon } from "../primitives/icons";
-
-const HERO_POINTS = [
-  "Coletas agendadas conforme sua demanda",
-  "Conformidade com a legislação vigente",
-  "Suporte direto, sem burocracia",
-];
+import { CheckIcon, LogoWord } from "../primitives/icons";
 
 export function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate overflow-hidden"
-      style={{
-        backgroundImage: "url('/foto fachada medictec.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className="relative isolate overflow-hidden border-b"
+      style={{ borderColor: "var(--line)" }}
     >
+      {/* atmosphere — soft brand halo for depth */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-x-0 -top-40 -z-10 mx-auto h-[620px] max-w-5xl"
         style={{
           background:
-            "linear-gradient(100deg, rgba(2,20,19,0.97) 0%, rgba(2,20,19,0.93) 45%, rgba(4,36,34,0.75) 70%, rgba(4,36,34,0.35) 100%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(2,20,19,0.55) 0%, transparent 30%, transparent 70%, rgba(2,20,19,0.75) 100%)",
+            "radial-gradient(60% 60% at 50% 0%, rgba(20,184,166,0.16) 0%, rgba(20,184,166,0.05) 38%, transparent 72%)",
         }}
       />
 
-      <div className="container-x relative grid gap-10 py-20 sm:py-24 lg:py-32">
-        <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/85 backdrop-blur">
+      <div className="container-x py-14 text-center sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-3xl">
+          {/* brand */}
+          <div className="reveal mb-9" style={{ animationDelay: "0ms" }}>
+            <span aria-label="Medictec Ambiental" className="inline-flex">
+              <LogoWord height={50} />
+            </span>
+          </div>
+
+          <span
+            className="reveal inline-flex items-center gap-2 rounded-full border bg-white px-3 py-1.5 text-xs font-medium text-[var(--ink-soft)]"
+            style={{ borderColor: "var(--line)", animationDelay: "80ms" }}
+          >
             <span
               className="dot"
               style={{
                 background: "var(--lime)",
-                boxShadow: "0 0 0 4px rgba(200,255,110,0.18)",
+                boxShadow: "0 0 0 3px rgba(200,255,110,0.28)",
               }}
             />
-            Coleta licenciada de RSS — Grupos A, B e E
-          </div>
+            Clientes ativos em +100 cidades do PR e SP
+          </span>
 
-          <h1 className="balance mt-5 text-white">
+          <h1 className="reveal balance mt-6" style={{ animationDelay: "160ms" }}>
             Descarte de Resíduos sem Dor de Cabeça?{" "}
-            <span className="mt-2 block">
-              <span className="swipe-highlight">A Medictec Resolve.</span>
-            </span>
+            <span style={{ color: "var(--petrol)" }}>A gente Resolve.</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-white/85">
-            Coletamos, transportamos e damos destino correto aos resíduos do
-            seu estabelecimento — com{" "}
-            <strong className="font-semibold text-white">UTR própria</strong> e{" "}
-            <strong className="font-semibold text-white">
-              frota licenciada
+          <p
+            className="reveal mx-auto mt-6 max-w-2xl text-lg text-[var(--ink-soft)]"
+            style={{ animationDelay: "240ms" }}
+          >
+            Resíduo de saúde ou industrial: a Medictec coleta, transporta e dá{" "}
+            <strong className="font-semibold text-[var(--ink)]">
+              o destino certo
             </strong>
-            . Você foca no que importa; o resto é com a gente.
+            , com documentação em dia e sempre no prazo.
           </p>
 
-          <ul className="mt-8 grid max-w-xl gap-2.5">
-            {HERO_POINTS.map((p) => (
-              <li
-                key={p}
-                className="flex items-start gap-2.5 text-base text-white/90"
-              >
-                <span
-                  className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full"
-                  style={{
-                    background: "var(--lime)",
-                    color: "var(--petrol-ink)",
-                  }}
-                >
-                  <CheckIcon className="h-3 w-3" />
-                </span>
-                {p}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <WhatsAppButton label="Falar no WhatsApp" variant="accent" />
-            <a
-              href="https://relacionamento.medictec.com.br/vagas-emprego"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
-              style={{
-                background: "transparent",
-                color: "#ffffff",
-                border: "1px solid rgba(255,255,255,0.35)",
-              }}
+          <div
+            className="reveal mt-7 flex items-center justify-center gap-2 text-sm text-[var(--ink-soft)]"
+            style={{ animationDelay: "300ms" }}
+          >
+            <span
+              className="grid h-5 w-5 shrink-0 place-items-center rounded-full"
+              style={{ background: "var(--teal-soft)", color: "var(--petrol)" }}
             >
-              Vagas de Emprego
-              <ArrowOut className="h-4 w-4 opacity-80" />
+              <CheckIcon className="h-3 w-3" />
+            </span>
+            Coletas agendadas conforme sua demanda
+          </div>
+
+          <div
+            className="reveal mt-8 flex flex-wrap items-center justify-center gap-3"
+            style={{ animationDelay: "360ms" }}
+          >
+            <WhatsAppButton variant="primary" />
+            <a href="#processo" className="btn btn-ghost btn-sm">
+              Ver como funciona
             </a>
           </div>
         </div>

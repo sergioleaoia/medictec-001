@@ -1,47 +1,50 @@
 @import "tailwindcss";
 
-/* ---------- Design tokens ---------- */
+/* ============================================================
+   Medictec Ambiental — "Clinical Calm" design system
+   Light, airy, precise. White-dominant, petrol-anchored,
+   one confident accent, minimal visual noise.
+   ============================================================ */
+
 :root {
-  /* Surfaces */
-  --paper: #f6f3ec;
-  --paper-deep: #efe9dc;
+  /* Surfaces — cool, bright, clinical */
+  --paper: #f6f8f7;
+  --paper-deep: #eef2f0;
   --surface: #ffffff;
-  --ink: #0b1f1e;
-  --ink-soft: #324442;
-  --muted: #5e7472;
-  --line: #e3ddcd;
-  --line-strong: #c9c0a7;
+
+  /* Ink */
+  --ink: #0d1c1b; /* headings — near-black, green undertone */
+  --ink-soft: #465a57; /* body copy */
+  --muted: #6f807d; /* captions, meta */
+  --line: #e6ece9; /* hairlines */
+  --line-strong: #d3ddd8;
 
   /* Brand */
   --petrol: #0e4f4c;
-  --petrol-deep: #093734;
-  --petrol-ink: #042422;
+  --petrol-deep: #0a3b39;
+  --petrol-ink: #052422;
   --teal: #14b8a6;
-  --teal-soft: #c8efe9;
-  --lime: #c8ff6e;
+  --teal-soft: #e2f4f0;
+  --lime: #c8ff6e; /* accent — used sparingly */
   --amber: #f5b840;
+  --accent: #2563eb; /* CTA highlight — reserved for action, pops off the green */
+  --accent-deep: #1d4ed8;
 
-  /* Status (used for biohazard tags) */
-  --hz-yellow: #f1c40f;
-  --hz-blue: #2e86de;
-  --hz-red: #e55353;
-
-  /* Type scale (clamp) */
-  --display: clamp(2.6rem, 6vw, 5.25rem);
-  --h1: clamp(2.1rem, 4.4vw, 3.4rem);
-  --h2: clamp(1.7rem, 3vw, 2.4rem);
-  --h3: 1.25rem;
+  /* Type scale (clamp) — calmer, tighter than before */
+  --display: clamp(2.4rem, 3.8vw, 3.5rem);
+  --h2: clamp(1.55rem, 2.6vw, 2.1rem);
+  --h3: 1.2rem;
 
   /* Radii */
-  --r-xs: 8px;
   --r-sm: 12px;
-  --r-md: 18px;
-  --r-lg: 26px;
-  --r-xl: 34px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 30px;
 
-  /* Shadows */
-  --shadow-soft: 0 1px 0 rgba(11, 31, 30, 0.04), 0 18px 48px -22px rgba(11, 31, 30, 0.18);
-  --shadow-ring: 0 0 0 1px var(--line);
+  /* Shadows — soft, low, single-layer */
+  --shadow-sm: 0 1px 2px rgba(13, 28, 27, 0.04);
+  --shadow-md: 0 12px 30px -18px rgba(13, 28, 27, 0.22);
+  --shadow-lg: 0 30px 60px -30px rgba(13, 28, 27, 0.28);
 }
 
 @theme inline {
@@ -54,6 +57,7 @@
 /* ---------- Base ---------- */
 * {
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 html {
@@ -62,100 +66,175 @@ html {
 
 body {
   background: var(--paper);
-  color: var(--ink);
+  color: var(--ink-soft);
   font-family: var(--font-body), system-ui, sans-serif;
-  font-feature-settings: "ss01", "cv11";
-  letter-spacing: -0.005em;
+  letter-spacing: -0.006em;
+  line-height: 1.6;
 }
 
 ::selection {
-  background: var(--lime);
+  background: var(--teal-soft);
   color: var(--petrol-ink);
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display), Georgia, serif;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
-  font-weight: 600;
+/* Visible keyboard focus */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--petrol);
+  outline-offset: 2px;
 }
 
-h1 {
-  font-size: var(--display);
+/* Offset anchored sections for the sticky header */
+[id] {
+  scroll-margin-top: 5rem;
 }
-h2 {
-  font-size: var(--h2);
-  line-height: 1.05;
-}
-h3 {
-  font-size: var(--h3);
-  letter-spacing: -0.015em;
+
+/* Base heading styles live in @layer base so Tailwind utilities
+   (e.g. text-white on the dark final-CTA heading) can override them. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), Georgia, serif;
+    color: var(--ink);
+    letter-spacing: -0.022em;
+    line-height: 1.08;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: var(--display);
+    line-height: 1.04;
+  }
+  h2 {
+    font-size: var(--h2);
+  }
+  h3 {
+    font-size: var(--h3);
+    letter-spacing: -0.015em;
+  }
 }
 
 p {
   text-wrap: pretty;
 }
 
-/* ---------- Utility classes ---------- */
+/* ---------- Layout helpers ---------- */
+.container-x {
+  width: 100%;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2rem);
+}
+
 .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-body), sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--petrol);
 }
 
-.container-x {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: clamp(1.25rem, 3vw, 2rem);
+.balance {
+  text-wrap: balance;
 }
 
-.hairline-grid {
-  background-image:
-    linear-gradient(to right, rgba(14, 79, 76, 0.07) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(14, 79, 76, 0.07) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
-
-.dot-grid {
-  background-image: radial-gradient(rgba(14, 79, 76, 0.18) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-
-/* Card with crisp ring */
+/* ---------- Surfaces ---------- */
 .card {
   background: var(--surface);
-  border-radius: var(--r-md);
-  box-shadow: var(--shadow-ring);
-}
-
-.card-soft {
-  background: var(--surface);
-  border-radius: var(--r-md);
   border: 1px solid var(--line);
+  border-radius: var(--r-lg);
 }
 
-/* Marquee for trust strip */
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.hover-lift {
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
 }
 
-.marquee-track {
-  animation: marquee 38s linear infinite;
+/* Icon chip */
+.chip {
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--teal-soft);
+  color: var(--petrol);
 }
 
-/* Accordion */
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.3rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.006em;
+  transition:
+    transform 160ms ease,
+    background 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* Primary = the reserved ACTION color (blue). Not used for any
+   non-interactive element, so CTAs pop off the green page. */
+.btn-primary {
+  background: var(--accent);
+  color: #ffffff;
+  padding: 1.1rem 2rem;
+  font-size: 1.05rem;
+  box-shadow: 0 10px 24px -10px rgba(37, 99, 235, 0.5);
+}
+.btn-primary:hover {
+  background: var(--accent-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px -10px rgba(37, 99, 235, 0.55);
+}
+
+/* smaller variant — e.g. hero secondary action */
+.btn-sm {
+  padding: 0.68rem 1.15rem;
+  font-size: 0.88rem;
+}
+.btn-accent {
+  background: var(--lime);
+  color: var(--petrol-ink);
+}
+.btn-accent:hover {
+  background: #bcf752;
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+.btn-ghost:hover {
+  background: var(--surface);
+  border-color: var(--petrol);
+  color: var(--petrol);
+}
+
+/* ---------- FAQ accordion ---------- */
 details.faq summary {
   list-style: none;
   cursor: pointer;
@@ -165,114 +244,62 @@ details.faq summary::-webkit-details-marker {
 }
 details.faq[open] .faq-icon {
   transform: rotate(45deg);
+  background: var(--petrol);
+  color: #fff;
 }
 details.faq .faq-icon {
-  transition: transform 220ms ease;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 0.95rem 1.35rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: -0.005em;
   transition:
-    transform 160ms ease,
-    background 200ms ease,
-    color 200ms ease,
-    box-shadow 200ms ease;
-  white-space: nowrap;
-}
-.btn-primary {
-  background: var(--petrol);
-  color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 10px 28px -14px rgba(14, 79, 76, 0.65);
-}
-.btn-primary:hover {
-  background: var(--petrol-deep);
-  transform: translateY(-1px);
-}
-.btn-accent {
-  background: var(--lime);
-  color: var(--petrol-ink);
-}
-.btn-accent:hover {
-  background: #b6f046;
-  transform: translateY(-1px);
-}
-.btn-ghost {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--line-strong);
-}
-.btn-ghost:hover {
-  background: var(--paper-deep);
+    transform 240ms ease,
+    background 240ms ease,
+    color 240ms ease;
 }
 
-/* Highlight swipe behind hero accent text */
-.swipe-highlight {
-  position: relative;
-  display: inline-block;
-  isolation: isolate;
-  color: #ffffff;
-}
-.swipe-highlight::before {
-  content: "";
-  position: absolute;
-  left: -0.05em;
-  right: -0.05em;
-  bottom: 0.06em;
-  height: 0.42em;
-  background: var(--teal);
-  transform: scaleX(0);
-  transform-origin: left center;
-  z-index: -1;
-  border-radius: 2px;
-  animation: swipe-in 700ms cubic-bezier(0.65, 0, 0.35, 1) 1.6s forwards;
-}
-@keyframes swipe-in {
+/* ---------- Marquee (logo strip, if needed) ---------- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
   to {
-    transform: scaleX(1);
+    transform: translateX(-50%);
   }
 }
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
 
-/* Subtle "scroll for more" cue */
-@keyframes nudge {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.7;
+/* ---------- Entrance (hero only, load-based) ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
-  50% {
-    transform: translateY(4px);
+  to {
     opacity: 1;
+    transform: none;
   }
 }
-.nudge {
-  animation: nudge 1.8s ease-in-out infinite;
+.reveal {
+  opacity: 0;
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
 }
 
-/* Tag dot variants */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* ---------- Misc ---------- */
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
   display: inline-block;
 }
-
-/* Text balance for short headings */
-.balance {
-  text-wrap: balance;
-}
-
-/* Hide scrollbars on horizontal scrollers */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

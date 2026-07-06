@@ -5,15 +5,17 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { ArrowOut, CheckIcon, WhatsAppIcon } from "../primitives/icons";
+import { trackLeadConverted } from "@/lib/gtm";
 
-const WEBHOOK_URL = "https://hook.us1.make.com/gc7warvx88aragvqlu6ibu25tlqopb2f";
-const THANK_YOU_URL =
-  "https://relacionamento.ambientalmedictec.com.br/obrigado";
+const WEBHOOK_URL =
+  "https://leaomarketeria.app.n8n.cloud/webhook/medictec-automacao-lp001";
+const THANK_YOU_URL = "/obrigado";
+// 1 tentativa + 2 retentativas; ms de espera antes da 2ª e da 3ª tentativa.
+const WEBHOOK_RETRY_DELAYS = [2000, 3000];
 
 const UTM_KEYS = [
   "utm_source",
@@ -40,7 +42,7 @@ export function useLeadForm() {
 
 export function LeadFormProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const utmsRef = useRef<UTMs>({});
+  const [utms, setUtms] = useState<UTMs>({});
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
@@ -55,7 +57,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
         if (v) fromUrl[key] = v;
       }
       const merged: UTMs = { ...fromStored, ...fromUrl };
-      utmsRef.current = merged;
+      // Client-only values (URL + sessionStorage) synced once on mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUtms(merged);
       if (Object.keys(merged).length > 0) {
         sessionStorage.setItem("medictec_utms", JSON.stringify(merged));
       }
@@ -78,9 +82,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
   }, [isOpen, close]);
 
   return (
-    <LeadFormCtx.Provider value={{ open, utms: utmsRef.current }}>
+    <LeadFormCtx.Provider value={{ open, utms }}>
       {children}
-      {isOpen && <LeadFormModal onClose={close} utms={utmsRef.current} />}
+      {isOpen && <LeadFormModal onClose={close} utms={utms} />}
     </LeadFormCtx.Provider>
   );
 }
@@ -95,10 +99,19 @@ function maskBRPhone(value: string) {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
-const SECTORS = [
-  { value: "industria", label: "Indústria" },
-  { value: "saude", label: "Saúde" },
+const WASTE_TYPES = [
+  { value: "saude_hospitalar", label: "Saúde/Hospitalar" },
+  { value: "industrial", label: "Industrial" },
+  { value: "organico_domiciliar", label: "Orgânico/Domiciliar" },
+  { value: "reciclavel", label: "Reciclável" },
   { value: "outro", label: "Outro" },
+];
+
+const PERIODICITY = [
+  { value: "semanal", label: "Semanal" },
+  { value: "quinzenal", label: "Quinzenal" },
+  { value: "mensal", label: "Mensal" },
+  { value: "nao_sei", label: "Ainda não sei" },
 ];
 
 const EMAIL_RE =
@@ -116,8 +129,8 @@ function LeadFormModal({
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const [phone, setPhone] = useState("");
-  const [sector, setSector] = useState("");
-  const [company, setCompany] = useState("");
+  const [wasteType, setWasteType] = useState("");
+  const [periodicity, setPeriodicity] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -129,27 +142,36 @@ function LeadFormModal({
       : undefined;
   const step1Valid =
     firstName.trim().length >= 2 && emailValid && phoneDigits.length >= 10;
-  const step2Valid = sector !== "" && company.trim().length >= 2;
+  const step2Valid = wasteType !== "" && periodicity !== "";
 
   const handleSubmit = async () => {
     if (!step2Valid || submitting) return;
     setSubmitting(true);
     setSubmitError(null);
 
-    const sectorLabel =
-      SECTORS.find((s) => s.value === sector)?.label ?? sector;
+    const wasteTypeLabel =
+      WASTE_TYPES.find((w) => w.value === wasteType)?.label ?? wasteType;
+    const periodicityLabel =
+      PERIODICITY.find((p) => p.value === periodicity)?.label ?? periodicity;
 
     const payload = {
-      firstName: firstName.trim(),
+      // Contato
+      name: firstName.trim(),
       email: email.trim(),
-      phone,
-      phoneDigits,
-      sector,
-      sectorLabel,
-      company: company.trim(),
+      phone, // formatado: (11) 99999-8888
+      phoneDigits, // só dígitos: 11999998888
+      whatsapp: phoneDigits ? `55${phoneDigits}` : "", // com DDI: 5511999998888
+      // Qualificação
+      wasteType, // valor: saude_hospitalar | industrial | organico_domiciliar | reciclavel | outro
+      wasteTypeLabel, // rótulo exibido
+      periodicity, // valor: semanal | quinzenal | mensal | nao_sei
+      periodicityLabel, // rótulo exibido
+      // Meta
+      source: "lp-medictec01",
       submittedAt: new Date().toISOString(),
       pageUrl: typeof window !== "undefined" ? window.location.href : "",
       referrer: typeof document !== "undefined" ? document.referrer : "",
+      // Rastreamento
       utm_source: utms.utm_source ?? "",
       utm_medium: utms.utm_medium ?? "",
       utm_campaign: utms.utm_campaign ?? "",
@@ -159,22 +181,46 @@ function LeadFormModal({
       fbclid: utms.fbclid ?? "",
     };
 
-    try {
-      const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        keepalive: true,
-      });
-      if (!res.ok) throw new Error(`Webhook ${res.status}`);
-      window.location.href = THANK_YOU_URL;
-    } catch (err) {
-      console.error("Lead webhook failed", err);
+    // Entrega o lead com retentativas: falhas transitórias de rede não perdem
+    // o lead. Só mostra erro depois de esgotar as tentativas.
+    let delivered = false;
+    const totalAttempts = WEBHOOK_RETRY_DELAYS.length + 1;
+    for (let attempt = 1; attempt <= totalAttempts; attempt++) {
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          keepalive: true,
+        });
+        if (!res.ok) throw new Error(`Webhook ${res.status}`);
+        delivered = true;
+        break;
+      } catch (err) {
+        console.error(`Lead webhook — tentativa ${attempt} falhou`, err);
+        if (attempt <= WEBHOOK_RETRY_DELAYS.length) {
+          await new Promise((r) =>
+            setTimeout(r, WEBHOOK_RETRY_DELAYS[attempt - 1])
+          );
+        }
+      }
+    }
+
+    if (!delivered) {
       setSubmitting(false);
       setSubmitError(
-        "Não conseguimos enviar agora. Verifique sua conexão e tente novamente."
+        "Não conseguimos enviar após algumas tentativas. Verifique sua conexão e tente novamente."
       );
+      return;
     }
+
+    // Envio confirmado (200): dispara a conversão no dataLayer e só navega
+    // depois que o GTM confirmar o disparo das tags (ou o timeout).
+    await trackLeadConverted({
+      email: email.trim(),
+      phone: phoneDigits ? `+55${phoneDigits}` : phone,
+    });
+    window.location.href = THANK_YOU_URL;
   };
 
   return (
@@ -253,11 +299,11 @@ function LeadFormModal({
           {step === 1 ? (
             <div className="space-y-4">
               <Field
-                label="Primeiro nome"
+                label="Nome"
                 name="firstName"
                 value={firstName}
                 onChange={setFirstName}
-                placeholder="Seu primeiro nome"
+                placeholder="Seu nome"
                 autoFocus
               />
               <Field
@@ -271,7 +317,7 @@ function LeadFormModal({
                 error={emailError}
               />
               <Field
-                label="WhatsApp"
+                label="Celular (WhatsApp)"
                 name="phone"
                 inputMode="tel"
                 value={phone}
@@ -280,66 +326,39 @@ function LeadFormModal({
               />
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
-                  Qual seu ramo de atividade?
+                  Tipo de resíduo que você gera
                 </label>
-                <div className="mt-2 grid grid-cols-3 gap-2">
-                  {SECTORS.map((s) => {
-                    const active = sector === s.value;
-                    return (
-                      <button
-                        key={s.value}
-                        type="button"
-                        onClick={() => setSector(s.value)}
-                        className="flex items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-medium transition"
-                        style={{
-                          borderColor: active
-                            ? "var(--petrol)"
-                            : "var(--line-strong)",
-                          background: active
-                            ? "var(--teal-soft)"
-                            : "transparent",
-                          color: active
-                            ? "var(--petrol-ink)"
-                            : "var(--ink-soft)",
-                        }}
-                      >
-                        {s.label}
-                      </button>
-                    );
-                  })}
-                </div>
+                <SelectGrid
+                  options={WASTE_TYPES}
+                  value={wasteType}
+                  onChange={setWasteType}
+                  cols={2}
+                />
               </div>
-              <Field
-                label="Nome da sua empresa"
-                name="company"
-                value={company}
-                onChange={setCompany}
-                placeholder="Razão social ou nome fantasia"
-                autoFocus
-              />
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+                  Periodicidade de coleta
+                </label>
+                <SelectGrid
+                  options={PERIODICITY}
+                  value={periodicity}
+                  onChange={setPeriodicity}
+                  cols={2}
+                />
+              </div>
             </div>
           )}
 
-          <div className="mt-7 flex items-center gap-3">
-            {step === 2 && (
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                disabled={submitting}
-                className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--petrol)] disabled:opacity-40"
-              >
-                ← Voltar
-              </button>
-            )}
+          <div className="mt-7">
             <button
               type="submit"
               disabled={
                 submitting || (step === 1 ? !step1Valid : !step2Valid)
               }
-              className="ml-auto inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
               style={{
                 background: "var(--petrol)",
                 boxShadow:
@@ -365,6 +384,16 @@ function LeadFormModal({
                 </>
               )}
             </button>
+            {step === 2 && (
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                disabled={submitting}
+                className="mt-3 w-full text-sm font-medium text-[var(--muted)] transition hover:text-[var(--petrol)] disabled:opacity-40"
+              >
+                ← Voltar
+              </button>
+            )}
           </div>
 
           {submitError ? (
@@ -384,8 +413,66 @@ function LeadFormModal({
               Resposta Imediata
             </p>
           )}
+
+          <p
+            className="mt-4 border-t pt-4 text-sm leading-relaxed text-[var(--muted)]"
+            style={{ borderColor: "var(--line)" }}
+          >
+            Para vagas de emprego,{" "}
+            <a
+              href="https://relacionamento.medictec.com.br/vagas-emprego"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[var(--petrol)] underline underline-offset-2 hover:text-[var(--petrol-deep)]"
+            >
+              acesse aqui
+            </a>
+            .
+          </p>
         </form>
       </div>
+    </div>
+  );
+}
+
+function SelectGrid({
+  options,
+  value,
+  onChange,
+  cols,
+}: {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+  cols: 2 | 3;
+}) {
+  return (
+    <div
+      className={`mt-2 grid gap-2 ${cols === 3 ? "grid-cols-3" : "grid-cols-2"}`}
+    >
+      {options.map((o, i) => {
+        const active = value === o.value;
+        const spanFull =
+          cols === 2 && options.length % 2 === 1 && i === options.length - 1;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChange(o.value)}
+            className={`flex items-center justify-center rounded-xl border px-3 py-3 text-sm font-medium transition ${
+              spanFull ? "col-span-2" : ""
+            }`}
+            style={{
+              borderColor: active ? "var(--petrol)" : "var(--line-strong)",
+              background: active ? "var(--teal-soft)" : "transparent",
+              color: active ? "var(--petrol-ink)" : "var(--ink-soft)",
+            }}
+          >
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

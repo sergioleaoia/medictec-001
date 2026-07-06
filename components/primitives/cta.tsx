@@ -8,8 +8,8 @@ export const WHATSAPP_NUMBER = "554330259200";
 type Variant = "primary" | "accent" | "ghost";
 
 export function WhatsAppButton({
-  label = "Falar no WhatsApp",
-  variant = "accent",
+  label = "Pedir orçamento",
+  variant = "primary",
   className = "",
 }: {
   label?: string;
