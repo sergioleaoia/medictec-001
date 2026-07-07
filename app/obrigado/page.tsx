@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LogoWord, CheckIcon, InstagramIcon } from "@/components/primitives/icons";
 
 export const metadata: Metadata = {
-  title: "Obrigado — Medictec Ambiental",
+  title: "Obrigado — Medic Tec Ambiental",
   robots: { index: false, follow: false },
 };
 

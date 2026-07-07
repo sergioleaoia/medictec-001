@@ -15,7 +15,7 @@ export function Footer() {
             href={INSTAGRAM}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Instagram da Medictec Ambiental"
+            aria-label="Instagram da Medic Tec Ambiental"
             className="grid h-9 w-9 place-items-center rounded-full border text-[var(--ink-soft)] transition hover:border-[var(--petrol)] hover:text-[var(--petrol)]"
             style={{ borderColor: "var(--line-strong)" }}
           >
@@ -23,7 +23,7 @@ export function Footer() {
           </a>
         </div>
         <span className="text-xs text-[var(--muted)]">
-          © {new Date().getFullYear()} Medictec Ambiental. Todos os direitos
+          © {new Date().getFullYear()} Medic Tec Ambiental. Todos os direitos
           reservados.
         </span>
       </div>

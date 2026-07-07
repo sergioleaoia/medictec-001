@@ -40,12 +40,12 @@ export function LogoWord({
     <span
       className={`inline-flex items-center ${className}`}
       style={{ height }}
-      aria-label="Medictec Ambiental"
+      aria-label="Medic Tec Ambiental"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/LOGO-MEDIC-TEC-768x458.png.webp"
-        alt="Medictec"
+        alt="Medic Tec"
         width={width}
         height={height}
         style={{ height, width: "auto", display: "block" }}

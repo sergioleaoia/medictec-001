@@ -20,7 +20,7 @@ const bodyFont = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Medictec Ambiental — Coleta licenciada de RSS para clínicas",
+  title: "Medic Tec Ambiental — Coleta licenciada de RSS para clínicas",
   description:
     "UTR própria licenciada IAT/PR e frota autorizada INMETRO. Coleta, transporte, tratamento e destinação final de resíduos de saúde com rastreabilidade do berço ao destino.",
 };

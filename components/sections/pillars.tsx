@@ -11,19 +11,19 @@ type Benefit = {
 const BENEFITS: Benefit[] = [
   {
     image: "/26.jpg",
-    alt: "Equipe da Medictec operando a autoclave própria para tratamento de resíduos",
+    alt: "Equipe da Medic Tec operando a autoclave própria para tratamento de resíduos",
     title: "Segurança e Confiabilidade",
     body: "Do recolhimento ao destino final, os resíduos são gerenciados respeitando todas as normas e legislações.",
   },
   {
     image: "/2.jpg",
-    alt: "Operador da Medictec monitorando o tratamento térmico por software",
+    alt: "Operador da Medic Tec monitorando o tratamento térmico por software",
     title: "Redução de Custos",
     body: "Você paga pela frequência que precisa, sem comprometer a qualidade ou a segurança.",
   },
   {
     image: "/17.jpg",
-    alt: "Vista aérea da sede e da frota própria da Medictec Ambiental",
+    alt: "Vista aérea da sede e da frota própria da Medic Tec Ambiental",
     title: "Pontualidade",
     body: "Nossa frota passa no dia combinado. Sem atraso.",
   },
@@ -34,7 +34,7 @@ export function PillarsSection() {
     <section className="py-20 sm:py-24">
       <div className="container-x">
         <div className="max-w-2xl">
-          <span className="eyebrow">Por que a Medictec</span>
+          <span className="eyebrow">Por que a Medic Tec</span>
           <h2 className="balance mt-3">
             Uma parceria que traz segurança, economia e pontualidade.
           </h2>

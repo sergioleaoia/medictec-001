@@ -291,7 +291,7 @@ function LeadFormModal({
                 className="text-sm font-semibold text-[var(--petrol-ink)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Falar com a Medictec
+                Falar com a Medic Tec
               </p>
               <p className="text-[0.7rem] text-[var(--muted)]">
                 Etapa {step} de 2
@@ -413,7 +413,7 @@ function LeadFormModal({
               ) : (
                 <>
                   <WhatsAppIcon className="h-4 w-4" />
-                  Falar com a Medictec
+                  Falar com a Medic Tec
                 </>
               )}
             </button>

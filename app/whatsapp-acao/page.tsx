@@ -4,7 +4,7 @@ import { LogoWord } from "@/components/primitives/icons";
 import { EmailCapture } from "@/components/site/email-capture";
 
 export const metadata: Metadata = {
-  title: "Condição especial de julho — Medictec Ambiental",
+  title: "Condição especial de julho — Medic Tec Ambiental",
   description:
     "Fale agora com nosso time e garanta a condição especial para fechar seu contrato de coleta de resíduos em julho.",
   robots: { index: false, follow: false },
@@ -81,7 +81,7 @@ export default function WhatsappAcao() {
           <div className="relative aspect-[16/10] w-full">
             <Image
               src="/foto fachada medictec.jpg"
-              alt="Fachada da sede da Medictec Ambiental"
+              alt="Fachada da sede da Medic Tec Ambiental"
               fill
               sizes="(max-width: 768px) 90vw, 42rem"
               className="object-cover"

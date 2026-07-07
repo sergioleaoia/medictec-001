@@ -28,7 +28,7 @@ export function FinalCTA() {
               className="text-[0.72rem] font-semibold uppercase tracking-[0.16em]"
               style={{ color: "var(--lime)" }}
             >
-              Sobre a Medictec
+              Sobre a Medic Tec
             </span>
             <h2 className="mt-3 text-white balance">
               Há décadas cuidando do descarte de resíduos de empresas como a
@@ -66,7 +66,7 @@ export function FinalCTA() {
           >
             <Image
               src="/foto fachada medictec.jpg"
-              alt="Fachada da sede da Medictec Ambiental"
+              alt="Fachada da sede da Medic Tec Ambiental"
               fill
               sizes="(max-width: 1024px) 90vw, 45vw"
               className="object-cover"

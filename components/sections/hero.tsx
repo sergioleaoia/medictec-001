@@ -22,7 +22,7 @@ export function Hero() {
         <div className="mx-auto max-w-3xl">
           {/* brand */}
           <div className="reveal mb-9" style={{ animationDelay: "0ms" }}>
-            <span aria-label="Medictec Ambiental" className="inline-flex">
+            <span aria-label="Medic Tec Ambiental" className="inline-flex">
               <LogoWord height={50} />
             </span>
           </div>
@@ -50,7 +50,7 @@ export function Hero() {
             className="reveal mx-auto mt-6 max-w-2xl text-lg text-[var(--ink-soft)]"
             style={{ animationDelay: "240ms" }}
           >
-            Resíduo de saúde ou industrial: a Medictec coleta, transporta,
+            Resíduo de saúde ou industrial: a Medic Tec coleta, transporta,
             realiza o tratamento e dá{" "}
             <strong className="font-semibold text-[var(--ink)]">
               o destino correto

@@ -24,7 +24,7 @@ export function SocialProofSection() {
     >
       <div className="container-x">
         <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-          Algumas das instituições de saúde que confiam na Medictec
+          Algumas das instituições de saúde que confiam na Medic Tec
         </p>
 
         <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-5 sm:gap-x-16">
