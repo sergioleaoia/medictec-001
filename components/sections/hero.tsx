@@ -50,9 +50,10 @@ export function Hero() {
             className="reveal mx-auto mt-6 max-w-2xl text-lg text-[var(--ink-soft)]"
             style={{ animationDelay: "240ms" }}
           >
-            Resíduo de saúde ou industrial: a Medictec coleta, transporta e dá{" "}
+            Resíduo de saúde ou industrial: a Medictec coleta, transporta,
+            realiza o tratamento e dá{" "}
             <strong className="font-semibold text-[var(--ink)]">
-              o destino certo
+              o destino correto
             </strong>
             , com documentação em dia e sempre no prazo.
           </p>

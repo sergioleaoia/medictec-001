@@ -10,6 +10,8 @@ type LeadConversion = {
   email: string;
   /** E.164, ex.: +5511999998888 */
   phone: string;
+  /** identifica a origem/formulário no GTM (default: landing principal) */
+  formId?: string;
 };
 
 /**
@@ -23,6 +25,7 @@ type LeadConversion = {
 export function trackLeadConverted({
   email,
   phone,
+  formId = "medictec-lp001",
 }: LeadConversion): Promise<void> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") {
@@ -43,7 +46,7 @@ export function trackLeadConverted({
       event: "lead-convertido",
       email,
       phone,
-      form_id: "medictec-lp001",
+      form_id: formId,
       // GTM invokes this after every tag bound to the event has fired.
       eventCallback: done,
       eventTimeout: 1500,

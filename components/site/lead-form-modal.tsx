@@ -134,6 +134,32 @@ function LeadFormModal({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Amarra o modal ao *visual viewport* (a área de fato visível). No mobile o
+  // `position: fixed` usa o layout viewport, então quando o teclado sobe — ou a
+  // barra do navegador aparece — a base do modal (com o botão de envio) fica
+  // atrás do teclado e trava. Acompanhando o visualViewport o modal sempre cabe
+  // na parte visível da tela.
+  const [viewport, setViewport] = useState<{ top: number; height: number } | null>(
+    () => {
+      if (typeof window === "undefined" || !window.visualViewport) return null;
+      const vv = window.visualViewport;
+      return { top: vv.offsetTop, height: vv.height };
+    }
+  );
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () =>
+      setViewport({ top: vv.offsetTop, height: vv.height });
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+
   const phoneDigits = phone.replace(/\D/g, "");
   const emailValid = EMAIL_RE.test(email.trim());
   const emailError =
@@ -228,7 +254,7 @@ function LeadFormModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="lead-form-title"
-      className="fixed inset-0 z-50 grid place-items-end p-0 sm:place-items-center sm:p-4"
+      className="fixed inset-0 z-50"
     >
       <button
         type="button"
@@ -238,11 +264,18 @@ function LeadFormModal({
       />
 
       <div
-        className="relative w-full max-w-md overflow-hidden rounded-t-3xl bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] sm:rounded-3xl"
-        style={{ border: "1px solid var(--line)" }}
+        className="absolute inset-x-0 flex items-center justify-center px-4 py-4"
+        style={{
+          top: viewport ? viewport.top : 0,
+          height: viewport ? viewport.height : "100%",
+        }}
       >
         <div
-          className="flex items-center justify-between px-6 py-4"
+          className="relative flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)]"
+          style={{ border: "1px solid var(--line)" }}
+        >
+        <div
+          className="flex shrink-0 items-center justify-between px-6 py-4"
           style={{ background: "var(--paper-deep)" }}
         >
           <div className="flex items-center gap-2">
@@ -276,7 +309,7 @@ function LeadFormModal({
         </div>
 
         <div
-          className="h-1 w-full"
+          className="h-1 w-full shrink-0"
           style={{ background: "var(--paper-deep)" }}
         >
           <div
@@ -289,7 +322,7 @@ function LeadFormModal({
         </div>
 
         <form
-          className="px-6 py-6"
+          className="min-h-0 flex-1 overflow-y-auto px-6 py-6"
           onSubmit={(e) => {
             e.preventDefault();
             if (step === 1 && step1Valid) setStep(2);
@@ -430,6 +463,7 @@ function LeadFormModal({
             .
           </p>
         </form>
+        </div>
       </div>
     </div>
   );
